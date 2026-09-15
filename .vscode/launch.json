@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Abrir en Navegador",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost/proyecto_Sigem/",
+            "webRoot": "${workspaceRoot}"
+        },
+        {
+            "name": "Escuchar Xdebug (PHP)",
+            "type": "php",
+            "request": "launch",
+            "port": 9003
+        }
+    ]
+}
