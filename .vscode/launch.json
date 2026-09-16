@@ -5,7 +5,7 @@
             "name": "Abrir en Navegador",
             "type": "msedge",
             "request": "launch",
-            "url": "http://localhost/proyecto_Sigem/",
+            "url": "http://localhost/Proyecto_Sigem/views/Dasboard.php",
             "webRoot": "${workspaceRoot}"
         },
         {
