@@ -1,5 +1,5 @@
 <?php
-// views/respaldo.php
+// views/Respaldo.php
 
 $error_respaldo = null;
 
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
             </div>
 
             <!-- MODAL FLOTANTE DE SEGURIDAD -->
-            <div id="modalRespaldoOverlay" class="modal-overlay">
+            <div id="modalRespaldoOverlay" class="modal-overlay" style="<?php echo isset($error_respaldo) ? 'display: flex;' : ''; ?>">
                 <div class="modal-card">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--color-respaldo);">
                         <i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i>
@@ -148,7 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
                         </div>
                     <?php endif; ?>
 
-                    <form action="respaldo.php" method="POST">
+                    <!-- Apuntando de forma exacta al nombre del archivo con R mayúscula -->
+                    <form action="Respaldo.php" method="POST">
                         <input type="hidden" name="accion_respaldo" value="1">
                         <div class="form-group">
                             <label>Código de Seguridad</label>
@@ -194,13 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
                 cerrarModalRespaldo();
             }
         });
-
-        <?php if (isset($error_respaldo)): ?>
-            // Si hubo error al enviar, reabrir automáticamente el modal para mostrarlo
-            window.onload = function() {
-                abrirModalRespaldo();
-            };
-        <?php endif; ?>
     </script>
 
 </body>

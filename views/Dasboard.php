@@ -662,7 +662,7 @@ $nombre_persona = "Carlos Mendoza"; // Nombre real inventado para la persona log
                 </a>
 
                 <!-- Respaldo / Backup BD -->
-                <a href="backup.php" class="quick-card">
+                <a href="Respaldo.php" class="quick-card">
                     <div class="quick-card-top">
                         <div class="quick-card-icon ic-backup">
                             <i class="fa-solid fa-database"></i>
