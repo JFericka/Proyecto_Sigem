@@ -51,7 +51,7 @@ public function actualizarConClave($id_usuario, $cedula, $nombre_usuario, $clave
     $sql = "UPDATE usuarios 
             SET cedula = ?, 
                 nombre_usuario = ?, 
-                clave = ?, 
+                password = ?, 
                 rol = ?, 
                 activo = ? 
             WHERE id_usuario = ?";
