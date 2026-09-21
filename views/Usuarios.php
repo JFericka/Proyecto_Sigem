@@ -1,46 +1,22 @@
 <?php
-// views/usuarios.php
+require_once '../config/Conexion.php';
+require_once '../models/UsuarioModel.php';
+
+$usuarioModel = new UsuarioModel($conexion);
+
 $action = $_GET['action'] ?? 'listar';
-$id_editar = $_GET['id'] ?? null;
+$id_editar = $_GET['id_usuario'] ?? null;
 
-// Datos de ejemplo basados en los registros de la base de datos
-$usuarios_db = [
-    [
-        "id_usuario" => 3, 
-        "cedula" => "001-987654-0003C", 
-        "nombre_usuario" => "Juan Salidas", 
-        "rol" => "Operador_Salidas", 
-        "activo" => 1, 
-        "fecha_creacion" => "2026-07-18 15:45:02"
-    ],
-    [
-        "id_usuario" => 2, 
-        "cedula" => "001-654321-0002B", 
-        "nombre_usuario" => "María Entradas", 
-        "rol" => "Operador_Entradas", 
-        "activo" => 1, 
-        "fecha_creacion" => "2026-07-18 15:45:02"
-    ],
-    [
-        "id_usuario" => 1, 
-        "cedula" => "001-123456-0001A", 
-        "nombre_usuario" => "Carlos Admin", 
-        "rol" => "Administrador", 
-        "activo" => 1, 
-        "fecha_creacion" => "2026-07-18 15:45:02"
-    ]
-];
-
+// Búsqueda de usuario específico para edición
 $usuario_actual = null;
 if ($action === 'editar' && $id_editar) {
-    foreach ($usuarios_db as $u) {
-        if ($u['id_usuario'] == $id_editar) {
-            $usuario_actual = $u;
-            break;
-        }
-    }
+    $usuario_actual = $usuarioModel->obtenerPorId($id_editar);
 }
+
+// Carga del listado principal
+$usuarios_db = $usuarioModel->obtenerTodos();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -70,7 +46,6 @@ if ($action === 'editar' && $id_editar) {
             font-family: 'Inter', sans-serif;
         }
 
-        /* Bloqueo de scroll para mantener la vista en un solo plano exacto de 14" */
         body {
             background-color: var(--bg-page);
             color: var(--text-main);
@@ -80,7 +55,6 @@ if ($action === 'editar' && $id_editar) {
             overflow: hidden;
         }
 
-        /* NAVBAR SUPERIOR */
         .navbar {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-light);
@@ -143,17 +117,15 @@ if ($action === 'editar' && $id_editar) {
             color: var(--text-muted);
         }
 
-        /* CONTENEDOR EXTERNO CON TRASFONDO AZULADO TRANSPARENTE */
         .page-wrapper {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 20px; /* Reducido para dar justa separación con los bordes */
+            padding: 12px 20px;
             background: radial-gradient(circle, rgba(36, 95, 115, 0.08) 0%, rgba(187, 189, 188, 0.15) 100%);
         }
 
-        /* CONTENEDOR PRINCIPAL AMPLIO */
         .main-container {
             max-width: 1420px;
             width: 98%;
@@ -161,14 +133,13 @@ if ($action === 'editar' && $id_editar) {
             background: var(--card-bg);
             border: 1px solid var(--border-light);
             border-radius: 12px;
-            padding: 20px 24px; /* Ajuste interno equilibrado */
+            padding: 20px 24px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 15px rgba(36, 95, 115, 0.08);
             overflow: hidden;
         }
 
-        /* CABECERA DEL MÓDULO */
         .module-header {
             display: flex;
             justify-content: space-between;
@@ -185,7 +156,6 @@ if ($action === 'editar' && $id_editar) {
             gap: 14px;
         }
 
-        /* BOTÓN DE RETORNO AL DASHBOARD */
         .btn-back {
             background-color: #E2E8F0;
             color: var(--text-main);
@@ -250,7 +220,6 @@ if ($action === 'editar' && $id_editar) {
 
         .btn-add:hover { opacity: 0.9; }
 
-        /* TABLA DE DATOS */
         .table-responsive {
             flex-grow: 1;
             overflow-y: auto;
@@ -334,7 +303,6 @@ if ($action === 'editar' && $id_editar) {
         .btn-delete { color: var(--color-danger); }
         .btn-delete:hover { background: var(--color-danger); color: white; border-color: var(--color-danger); }
 
-        /* ESTILOS AVANZADOS Y ORDENADOS PARA LOS FORMULARIOS */
         .form-wrapper-scroll {
             flex-grow: 1;
             overflow-y: auto;
@@ -474,20 +442,18 @@ if ($action === 'editar' && $id_editar) {
         <main class="main-container">
 
             <?php if ($action === 'listar'): ?>
-                <!-- VISTA 1: LISTADO PRINCIPAL -->
                 <div class="module-header">
                     <div class="header-left">
-                        <!-- Botón para volver al Dashboard -->
-                        <a href="dashboard.php" class="btn-back" title="Volver al Dashboard">
+                        <a href="Dasboard.php" class="btn-back" title="Volver al Dashboard">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <div class="module-title">
                             <h1><i class="fa-solid fa-user-gear"></i> Gestión de Usuarios</h1>
-                            <p>Administra los usuarios, cédulas, roles y permisos de acceso al sistema municipal (Máximo 5).</p>
+                            <p>Administra los usuarios, cédulas, roles y permisos de acceso al sistema municipal.</p>
                         </div>
                     </div>
                     <div class="header-actions">
-                        <a href="usuarios.php?action=agregar" class="btn-add">
+                        <a href="Usuarios.php?action=agregar" class="btn-add">
                             <i class="fa-solid fa-user-plus"></i> Agregar Usuario
                         </a>
                     </div>
@@ -507,50 +473,56 @@ if ($action === 'editar' && $id_editar) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($usuarios_db as $usr): ?>
-                            <tr>
-                                <td><strong><?php echo $usr['id_usuario']; ?></strong></td>
-                                <td><code><?php echo htmlspecialchars($usr['cedula']); ?></code></td>
-                                <td><?php echo htmlspecialchars($usr['nombre_usuario']); ?></td>
-                                <td>
-                                    <?php 
-                                        $clase_rol = 'role-admin';
-                                        if($usr['rol'] == 'Operador_Entradas') $clase_rol = 'role-entradas';
-                                        elseif($usr['rol'] == 'Operador_Salidas') $clase_rol = 'role-salidas';
-                                    ?>
-                                    <span class="role-badge <?php echo $clase_rol; ?>">
-                                        <i class="fa-solid fa-shield-halved"></i> <?php echo str_replace('_', ' ', $usr['rol']); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php if($usr['activo'] == 1): ?>
-                                        <span class="status-badge status-active"></span> Activo
-                                    <?php else: ?>
-                                        <span class="status-badge status-inactive"></span> Inactivo
-                                    <?php endif; ?>
-                                </td>
-                                <td><?php echo $usr['fecha_creacion']; ?></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <a href="usuarios.php?action=editar&id=<?php echo $usr['id_usuario']; ?>" class="btn-action btn-edit" title="Editar usuario">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </a>
-                                        <a href="#" class="btn-action btn-delete" title="Eliminar usuario" onclick="return confirm('¿Está seguro de eliminar este usuario?');">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                            <?php if (!empty($usuarios_db)): ?>
+                                <?php foreach ($usuarios_db as $usr): ?>
+                                <tr>
+                                    <td><strong><?php echo htmlspecialchars($usr['id_usuario']); ?></strong></td>
+                                    <td><code><?php echo htmlspecialchars($usr['cedula']); ?></code></td>
+                                    <td><?php echo htmlspecialchars($usr['nombre_usuario']); ?></td>
+                                    <td>
+                                        <?php 
+                                            $clase_rol = 'role-admin';
+                                            if($usr['rol'] == 'Operador_Entradas') $clase_rol = 'role-entradas';
+                                            elseif($usr['rol'] == 'Operador_Salidas') $clase_rol = 'role-salidas';
+                                        ?>
+                                        <span class="role-badge <?php echo $clase_rol; ?>">
+                                            <i class="fa-solid fa-shield-halved"></i> <?php echo htmlspecialchars(str_replace('_', ' ', $usr['rol'])); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if($usr['activo'] == 1): ?>
+                                            <span class="status-badge status-active"></span> Activo
+                                        <?php else: ?>
+                                            <span class="status-badge status-inactive"></span> Inactivo
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($usr['fecha_creacion']); ?></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <a href="Usuarios.php?action=editar&id_usuario=<?php echo $usr['id_usuario']; ?>" class="btn-action btn-edit" title="Editar usuario">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+                                            <!-- RUTA CORREGIDA PUNTUALMENTE -->
+                                            <a href="../controllers/UsuarioController.php?action=eliminar&id_usuario=<?php echo $usr['id_usuario']; ?>" class="btn-action btn-delete" title="Eliminar usuario" onclick="return confirm('¿Está seguro de eliminar este usuario?');">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding: 20px; color: var(--text-muted);">No hay usuarios registrados.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
             <?php elseif ($action === 'agregar'): ?>
-                <!-- VISTA 2: FORMULARIO AGREGAR USUARIO (ESTRUCTURADO Y ORDENADO) -->
                 <div class="module-header" style="margin-bottom: 15px;">
                     <div class="header-left">
-                        <a href="usuarios.php" class="btn-back" title="Volver al listado">
+                        <a href="Usuarios.php" class="btn-back" title="Volver al listado">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <div class="module-title">
@@ -562,7 +534,8 @@ if ($action === 'editar' && $id_editar) {
 
                 <div class="form-wrapper-scroll">
                     <div class="form-container-structured">
-                        <form action="usuarios.php" method="POST">
+                        <!-- RUTA CORREGIDA PUNTUALMENTE -->
+                        <form action="../controllers/UsuarioController.php?action=guardar" method="POST" autocomplete="off">
                             
                             <div class="form-section-title">
                                 <i class="fa-solid fa-id-card"></i> Información de Identificación
@@ -573,14 +546,14 @@ if ($action === 'editar' && $id_editar) {
                                     <label>Número de Cédula</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-address-card"></i>
-                                        <input type="text" class="form-control" placeholder="Ej. 001-XXXXXX-XXXXX" required>
+                                        <input type="text" name="cedula" class="form-control" placeholder="Ej. 001-XXXXXX-XXXXX" autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Nombre de Usuario</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-user"></i>
-                                        <input type="text" class="form-control" placeholder="Ej. operador_2" required>
+                                        <input type="text" name="nombre_usuario" class="form-control" placeholder="Ej. operador_2" autocomplete="off" required>
                                     </div>
                                 </div>
                             </div>
@@ -594,16 +567,16 @@ if ($action === 'editar' && $id_editar) {
                                     <label>Contraseña de Acceso</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-key"></i>
-                                        <input type="password" class="form-control" placeholder="••••••••" required>
+                                        <input type="password" name="clave" class="form-control" placeholder="••••••••" autocomplete="new-password" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Rol Asignado</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-shield-halved"></i>
-                                        <select class="form-control" required>
+                                        <select name="rol" class="form-control" required>
                                             <option value="">Seleccione un rol...</option>
-                                            <option value="Administrador">Administrador (Máx. 1)</option>
+                                            <option value="Administrador">Administrador</option>
                                             <option value="Operador_Entradas">Operador de Entradas</option>
                                             <option value="Operador_Salidas">Operador de Salidas</option>
                                         </select>
@@ -612,7 +585,7 @@ if ($action === 'editar' && $id_editar) {
                             </div>
 
                             <div class="form-actions">
-                                <a href="usuarios.php" class="btn-cancel"><i class="fa-solid fa-xmark"></i> Cancelar</a>
+                                <a href="Usuarios.php" class="btn-cancel"><i class="fa-solid fa-xmark"></i> Cancelar</a>
                                 <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar Usuario</button>
                             </div>
                         </form>
@@ -620,14 +593,13 @@ if ($action === 'editar' && $id_editar) {
                 </div>
 
             <?php elseif ($action === 'editar' && $usuario_actual): ?>
-                <!-- VISTA 3: FORMULARIO EDITAR USUARIO (ESTRUCTURADO Y ORDENADO) -->
                 <div class="module-header" style="margin-bottom: 15px;">
                     <div class="header-left">
-                        <a href="usuarios.php" class="btn-back" title="Volver al listado">
+                        <a href="Usuarios.php" class="btn-back" title="Volver al listado">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <div class="module-title">
-                            <h1><i class="fa-solid fa-user-pen"></i> Editar Usuario (ID: <?php echo $usuario_actual['id_usuario']; ?>)</h1>
+                            <h1><i class="fa-solid fa-user-pen"></i> Editar Usuario (ID: <?php echo htmlspecialchars($usuario_actual['id_usuario']); ?>)</h1>
                             <p>Modifique de forma segura los datos y permisos de acceso para este usuario.</p>
                         </div>
                     </div>
@@ -635,8 +607,11 @@ if ($action === 'editar' && $id_editar) {
 
                 <div class="form-wrapper-scroll">
                     <div class="form-container-structured">
-                        <form action="usuarios.php" method="POST">
+                        <!-- RUTA CORREGIDA PUNTUALMENTE -->
+                        <form action="../controllers/UsuarioController.php?action=actualizar" method="POST" autocomplete="off">
                             
+                            <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($usuario_actual['id_usuario']); ?>">
+
                             <div class="form-section-title">
                                 <i class="fa-solid fa-id-card"></i> Información de Identificación
                             </div>
@@ -646,14 +621,14 @@ if ($action === 'editar' && $id_editar) {
                                     <label>Número de Cédula</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-address-card"></i>
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['cedula']); ?>" required>
+                                        <input type="text" name="cedula" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['cedula']); ?>" autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Nombre de Usuario</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-user"></i>
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['nombre_usuario']); ?>" required>
+                                        <input type="text" name="nombre_usuario" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['nombre_usuario']); ?>" autocomplete="off" required>
                                     </div>
                                 </div>
                             </div>
@@ -667,33 +642,48 @@ if ($action === 'editar' && $id_editar) {
                                     <label>Nueva Contraseña (Opcional)</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-key"></i>
-                                        <input type="password" class="form-control" placeholder="Dejar en blanco para conservar">
+                                        <input type="password" name="clave" class="form-control" placeholder="Dejar en blanco para conservar" autocomplete="new-password" id="clave_editar" style="padding-right: 40px;">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Rol Asignado</label>
                                     <div class="input-with-icon">
                                         <i class="fa-solid fa-shield-halved"></i>
-                                        <select class="form-control" required>
+                                        <select name="rol" class="form-control" required>
                                             <option value="Administrador" <?php if($usuario_actual['rol']=='Administrador') echo 'selected'; ?>>Administrador</option>
                                             <option value="Operador_Entradas" <?php if($usuario_actual['rol']=='Operador_Entradas') echo 'selected'; ?>>Operador de Entradas</option>
                                             <option value="Operador_Salidas" <?php if($usuario_actual['rol']=='Operador_Salidas') echo 'selected'; ?>>Operador de Salidas</option>
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label>Estado del Usuario</label>
+                                    <div class="input-with-icon">
+                                        <i class="fa-solid fa-toggle-on"></i>
+                                        <select name="activo" class="form-control" required>
+                                            <option value="1" <?php if(isset($usuario_actual) && $usuario_actual['activo'] == 1) echo 'selected'; ?>>Activo</option>
+                                            <option value="0" <?php if(isset($usuario_actual) && $usuario_actual['activo'] == 0) echo 'selected'; ?>>Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-actions">
-                                <a href="usuarios.php" class="btn-cancel"><i class="fa-solid fa-xmark"></i> Cancelar</a>
+                                <a href="Usuarios.php" class="btn-cancel"><i class="fa-solid fa-xmark"></i> Cancelar</a>
                                 <button type="submit" class="btn-update"><i class="fa-solid fa-check"></i> Actualizar Cambios</button>
                             </div>
                         </form>
                     </div>
                 </div>
+            <?php else: ?>
+                <div style="padding: 20px; text-align: center;">
+                    <p>El usuario especificado no fue encontrado.</p>
+                    <br>
+                    <a href="Usuarios.php" class="btn-cancel">Volver al listado</a>
+                </div>
             <?php endif; ?>
 
         </main>
     </div>
-
 </body>
 </html>
