@@ -1,37 +1,4 @@
-<?php
-// views/Respaldo.php
 
-$error_respaldo = null;
-
-// Procesamiento del respaldo si se envió el formulario del modal
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
-    $codigo_ingresado = $_POST['codigo_seguridad'] ?? '';
-    // Código de seguridad interno estricto para validar la copia de seguridad
-    $codigo_maestro = "SIGEM2026*Backup"; 
-
-    if ($codigo_ingresado === $codigo_maestro) {
-        // Generar nombre de archivo único con fecha y hora municipal
-        $nombre_archivo = "sigem_respaldo_" . date('Y-m-d_H-i-s') . ".sql";
-        
-        // Cabeceras HTTP para forzar la descarga directa del archivo en la computadora
-        header('Content-Type: application/sql; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $nombre_archivo . '"');
-        
-        // Volcado estructurado del respaldo de la base de datos municipal
-        echo "-- ==========================================================\n";
-        echo "-- SISTEMA DE GESTIÓN DE BODEGA MUNICIPAL (SIGEM)\n";
-        echo "-- Respaldo automático de base de datos\n";
-        echo "-- Fecha y hora: " . date('Y-m-d H:i:s') . "\n";
-        echo "-- ==========================================================\n\n";
-        echo "SET NAMES utf8mb4;\n";
-        echo "SET FOREIGN_KEY_CHECKS = 0;\n\n";
-        echo "-- Tablas del sistema: productos, entradas, salidas, usuarios, bitacora\n";
-        exit;
-    } else {
-        $error_respaldo = "Código de seguridad incorrecto. Acceso denegado.";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -40,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
     <title>Respaldo de Base de Datos - SIGEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/respaldo.css">
+    
     <style>
         :root {
             --bg-page: #F2F0EF;          
@@ -132,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
             </div>
 
             <!-- MODAL FLOTANTE DE SEGURIDAD -->
-            <div id="modalRespaldoOverlay" class="modal-overlay" style="<?php echo isset($error_respaldo) ? 'display: flex;' : ''; ?>">
+            <div id="modalRespaldoOverlay" class="modal-overlay" style="display: none;">
                 <div class="modal-card">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--color-respaldo);">
                         <i class="fa-solid fa-lock" style="font-size: 1.1rem;"></i>
@@ -142,15 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
                         Por medidas de control institucional, ingrese su código de seguridad para autorizar la descarga del archivo SQL de respaldo.
                     </p>
 
-                    <?php if (isset($error_respaldo)): ?>
-                        <div style="background: #FEE2E2; color: var(--color-danger); padding: 8px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; margin-bottom: 14px;">
-                            <i class="fa-solid fa-triangle-exclamation"></i> <?php echo $error_respaldo; ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Apuntando de forma exacta al nombre del archivo con R mayúscula -->
-                    <form action="Respaldo.php" method="POST">
+                    <form id="form-respaldo">
                         <input type="hidden" name="accion_respaldo" value="1">
+                        
                         <div class="form-group">
                             <label>Código de Seguridad</label>
                             <div style="position: relative; display: flex; align-items: center;">
@@ -158,17 +121,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
                                 <input type="password" name="codigo_seguridad" class="form-control" placeholder="Ingrese contraseña..." required>
                             </div>
                         </div>
-                        <div class="modal-actions">
+
+                        <div id="loading" style="text-align: center; margin-top: 15px; display: none;">
+                            <div class="spinner" id="spinner"></div>
+                            <p id="loading-text" style="color: #555; font-size: 0.85rem; margin-top: 10px;">Generando respaldo .bak, por favor espera...</p>
+                        </div>
+
+                        <div id="mensaje" style="margin-top: 15px;"></div>
+
+                        <div class="modal-actions" style="margin-top: 20px;">
                             <button type="button" onclick="cerrarModalRespaldo()" style="background: #E2E8F0; color: var(--text-main); border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
                                 <i class="fa-solid fa-xmark"></i> Cancelar
                             </button>
-                            <button type="submit" style="background: var(--color-primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <button type="submit" id="btn-respaldo" style="background: var(--color-primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fa-solid fa-download"></i> Aceptar y Descargar
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+
+        
 
         </main>
     </div>
@@ -196,6 +169,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion_respaldo'])) {
             }
         });
     </script>
+
+    <script src="../assets/js/respaldo.js"></script>
 
 </body>
 </html>
