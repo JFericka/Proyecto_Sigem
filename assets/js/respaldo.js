@@ -10,22 +10,18 @@ document.getElementById('form-respaldo').addEventListener('submit', function(e) 
     const loadingDiv = document.getElementById('loading');
     const mensaje = document.getElementById('mensaje');
 
-    // Activar animación
     btn.disabled = true;
     btn.style.opacity = '0.7';
     loadingDiv.style.display = 'block';
     mensaje.innerHTML = '';
 
-    // Apuntamos directamente a tu controlador
     fetch('../controllers/respaldocontroller.php', {
         method: 'POST',
         body: formData
     })
     .then(async response => {
-        // Obtenemos el tipo de contenido que devuelve el controlador PHP
         const contentType = response.headers.get('content-type');
         
-        // Si la respuesta es un archivo descargable (octet-stream)
         if (response.ok && contentType && contentType.includes('application/octet-stream')) {
             const blob = await response.blob();
             let filename = 'sigem_respaldo.bak';
@@ -36,7 +32,6 @@ document.getElementById('form-respaldo').addEventListener('submit', function(e) 
                 if (matches != null && matches[1]) filename = matches[1];
             }
 
-            // Crear enlace temporal para forzar la descarga en el navegador
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -48,13 +43,11 @@ document.getElementById('form-respaldo').addEventListener('submit', function(e) 
             
             return { status: 'success', msg: 'Respaldo generado y descargado exitosamente.' };
         } else {
-            // Si no es un archivo, asumimos que el controlador devolvió un texto de error
             const errorText = await response.text();
             throw new Error(errorText || 'Ocurrió un error inesperado al procesar el respaldo.');
         }
     })
     .then(data => {
-        // Finaliza carga con éxito
         loadingDiv.style.display = 'none';
         btn.disabled = false;
         btn.style.opacity = '1';
@@ -64,7 +57,6 @@ document.getElementById('form-respaldo').addEventListener('submit', function(e) 
         form.reset();
     })
     .catch(error => {
-        // Finaliza carga con error
         loadingDiv.style.display = 'none';
         btn.disabled = false;
         btn.style.opacity = '1';
