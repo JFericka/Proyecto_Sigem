@@ -1,52 +1,21 @@
 <?php
 // views/inventario.php
+
 $action = $_GET['action'] ?? 'listar';
 
-// Datos de inventario sincronizados estrictamente con las tablas `productos` y `categorias` de la BD
-$inventario_db = [
-    [
-        "id_producto" => 1,
-        "codigo" => "LIM-001",
-        "nombre" => "Cloro",
-        "categoria" => "limpieza",
-        "tipo" => "consumible",
-        "unidad" => "galón",
-        "stock_actual" => 120,
-        "activo" => 1
-    ],
-    [
-        "id_producto" => 6,
-        "codigo" => "HER-001",
-        "nombre" => "Pala redonda",
-        "categoria" => "herramientas_manuales",
-        "tipo" => "herramienta",
-        "unidad" => "unidad",
-        "stock_actual" => 35,
-        "activo" => 1
-    ],
-    [
-        "id_producto" => 11,
-        "codigo" => "ELE-001",
-        "nombre" => "Taladro percutor 1/2\"",
-        "categoria" => "herramientas_electricas",
-        "tipo" => "herramienta",
-        "unidad" => "unidad",
-        "stock_actual" => 10,
-        "activo" => 1
-    ],
-    [
-        "id_producto" => 21,
-        "codigo" => "SEG-001",
-        "nombre" => "Casco de seguridad",
-        "categoria" => "seguridad_higiene",
-        "tipo" => "consumible",
-        "unidad" => "unidad",
-        "stock_actual" => 0,
-        "activo" => 0 // Inhabilitado / Dado de baja
-    ]
-];
+// Conexión a la base de datos
+require_once __DIR__ . '/../config/Conexion.php';
 
-// Catálogo de categorías oficiales de la BD
+// Controlador de inventario
+require_once __DIR__ . '/../controllers/Inventariocontroller.php';
+
+// Crear el controlador usando la conexión de la BD
+$controller = new InventarioController($conexion);
+
+// Obtener todos los productos desde la base de datos
+$inventario_db = $controller->listar();
+
+// Catálogo de categorías
 $categorias_db = [
     "limpieza" => "Productos de aseo, desinfección y limpieza general",
     "herramientas_manuales" => "Herramientas de uso manual para construcción",
