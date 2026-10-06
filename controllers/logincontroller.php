@@ -1,5 +1,5 @@
 <?php
-// controllers/login.php  (clase AuthController)
+// controllers/login.php — AuthController
 
 require_once __DIR__ . '/../models/LoginModel.php';
 require_once __DIR__ . '/../config/Conexion.php';
@@ -22,60 +22,44 @@ class AuthController
         header('Content-Type: application/json; charset=utf-8');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(false, "Método no permitido.");
+            $this->responder(false, 'Método no permitido.');
         }
 
-        $usuarioInput  = trim($_POST['usuario'] ?? '');
-        $passwordInput = trim($_POST['password'] ?? '');
+        $usuario  = trim($_POST['usuario'] ?? '');
+        $password = trim($_POST['password'] ?? '');
 
-        if ($usuarioInput === '' || $passwordInput === '') {
-            $this->responderJson(false, "Todos los campos son obligatorios.");
+        if ($usuario === '' || $password === '') {
+            $this->responder(false, 'Todos los campos son obligatorios.');
         }
 
-        $usuarioModel = new UsuarioModel($this->conn);
+        $model = new UsuarioModel($this->conn);
 
         try {
-            $user = $usuarioModel->getUsuarioPorNombre($usuarioInput);
+            $user = $model->getUsuarioPorNombre($usuario); // consulta preparada, sin concatenar SQL
         } catch (RuntimeException $e) {
             error_log($e->getMessage());
-            $this->responderJson(false, "Ocurrió un error en el sistema. Intenta más tarde.");
-            return; 
+            $this->responder(false, 'Ocurrió un error en el sistema. Intenta más tarde.');
         }
 
-        $passwordValida = false;
-
-        if ($user) {
-            $infoHash = password_get_info($user['password']);
-
-            if ($infoHash['algo'] !== null) {
-                // Contraseña ya almacenada como hash seguro
-                $passwordValida = password_verify($passwordInput, $user['password']);
-            } elseif (hash_equals((string) $user['password'], $passwordInput)) {
-
-                $passwordValida = true;
-                $usuarioModel->actualizarPassword(
-                    (int) $user['id_usuario'],
-                    password_hash($passwordInput, PASSWORD_DEFAULT)
-                );
-            }
+        
+        if (!$user) {
+            $this->responder(false, 'Usuario Incorrecto.');
         }
 
-        if (!$user || !$passwordValida) {
-            $this->responderJson(false, "Usuario o contraseña incorrecta.");
+        if (!$this->passwordValida($password, $user, $model)) {
+            $this->responder(false, 'Contraseña Incorrecta.');
         }
 
         if ((int) $user['activo'] !== 1) {
-            $this->responderJson(false, "Tu cuenta está inactiva. Contacta al administrador.");
+            $this->responder(false, 'Tu cuenta está inactiva. Contacta al administrador.');
         }
 
-        // Previene session fixation
-        session_regenerate_id(true);
-
+        session_regenerate_id(true); // previene session fixation
         $_SESSION['id_usuario']     = $user['id_usuario'];
         $_SESSION['nombre_usuario'] = $user['nombre_usuario'];
         $_SESSION['rol']            = $user['rol'];
 
-        $this->responderJson(true, "Bienvenido, {$user['nombre_usuario']}.", 'views/Dashboard.php');
+        $this->responder(true, "Bienvenido, {$user['nombre_usuario']}.", 'views/Dashboard.php');
     }
 
     public function logout(): void
@@ -86,22 +70,32 @@ class AuthController
 
         $_SESSION = [];
         session_destroy();
-
-        header("Location: index.php");
+        header('Location: index.php');
         exit;
     }
 
-    private function responderJson(bool $success, string $mensaje, ?string $redirect = null): void
+    /** Verifica el password; migra automáticamente hashes antiguos en texto plano. */
+    private function passwordValida(string $input, array $user, UsuarioModel $model): bool
+    {
+        if (password_get_info($user['password'])['algo'] !== null) {
+            return password_verify($input, $user['password']);
+        }
+
+        if (hash_equals((string) $user['password'], $input)) {
+            $model->actualizarPassword((int) $user['id_usuario'], password_hash($input, PASSWORD_DEFAULT));
+            return true;
+        }
+
+        return false;
+    }
+
+    private function responder(bool $success, string $mensaje, ?string $redirect = null): never
     {
         if (!$success) {
             $_SESSION['error'] = $mensaje;
         }
 
-        echo json_encode([
-            'success'  => $success,
-            'message'  => $mensaje,
-            'redirect' => $redirect,
-        ]);
+        echo json_encode(['success' => $success, 'message' => $mensaje, 'redirect' => $redirect]);
         exit;
     }
 }
