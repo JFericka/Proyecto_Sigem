@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/config/Conexion.php';
-require_once __DIR__ . '/controllers/login.php';
+require_once __DIR__ . '/controllers/logincontroller.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

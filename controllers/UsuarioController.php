@@ -33,13 +33,11 @@ switch ($action) {
 
             if ($id_usuario && !empty($cedula) && !empty($nombre_usuario) && !empty($rol)) {
                 
-                // 2. Enviamos el parámetro $activo al modelo según si cambió o no la contraseña
-                if (!empty($clave)) {
-                    $clave_hash = password_hash($clave, PASSWORD_DEFAULT);
-                    $resultado  = $usuarioModel->actualizarConClave($id_usuario, $cedula, $nombre_usuario, $clave_hash, $rol, $activo);
-                } else {
-                    $resultado  = $usuarioModel->actualizarSinClave($id_usuario, $cedula, $nombre_usuario, $rol, $activo);
-                }
+            //si el usuario ingreso un nueva clave se aplica el hash, de lo contrario se deja en null para no actualizar la clave
+            $clave_hash = !empty($clave) ? password_hash($clave, PASSWORD_DEFAULT) : null;
+
+            //llamamos a la funcion del modelo
+            $resultado = $usuarioModel->actualizar($id_usuario, $cedula, $nombre_usuario, $rol, $activo, $clave_hash);
 
                 // 3. Evaluamos la respuesta para redirigir adecuadamente
                 if ($resultado === true || (is_numeric($resultado) && $resultado >= 0)) {

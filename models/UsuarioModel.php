@@ -47,31 +47,26 @@ class UsuarioModel {
         return false;
     }
 
-public function actualizarConClave($id_usuario, $cedula, $nombre_usuario, $clave_hash, $rol, $activo) {
-    $sql = "UPDATE usuarios 
-            SET cedula = ?, 
-                nombre_usuario = ?, 
-                password = ?, 
-                rol = ?, 
-                activo = ? 
-            WHERE id_usuario = ?";
-            
-    $stmt = $this->db->prepare($sql);
-    $stmt->bind_param("sssssi", $cedula, $nombre_usuario, $clave_hash, $rol, $activo, $id_usuario);
-    
-    return $this->ejecutarActualizacion($stmt);
-}
+public function actualizar($id_usuario, $cedula, $nombre_usuario, $rol, $activo, $clave_hash = null) {
+    $campos = ["cedula = ?", "nombre_usuario = ?", "rol = ?", "activo = ?"];
+    $tipos = "sssi";
+    $valores = [$cedula, $nombre_usuario, $rol, $activo];
 
-public function actualizarSinClave($id_usuario, $cedula, $nombre_usuario, $rol, $activo) {
-    $sql = "UPDATE usuarios 
-            SET cedula = ?, 
-                nombre_usuario = ?, 
-                rol = ?, 
-                activo = ? 
-            WHERE id_usuario = ?";
-            
+    // Si se envió una nueva contraseña, la agregamos a la consulta
+    if (!empty($clave_hash)) {
+        array_splice($campos, 2, 0, "password = ?"); // Inserta password en la posición correcta
+        $tipos = "ssssi";
+        array_splice($valores, 2, 0, $clave_hash);
+    }
+
+    $sql = "UPDATE usuarios SET " . implode(", ", $campos) . " WHERE id_usuario = ?";
+    
+    // Agregamos el id al final de los tipos y valores
+    $tipos .= "i";
+    $valores[] = $id_usuario;
+
     $stmt = $this->db->prepare($sql);
-    $stmt->bind_param("ssssi", $cedula, $nombre_usuario, $rol, $activo, $id_usuario);
+    $stmt->bind_param($tipos, ...$valores);
 
     return $this->ejecutarActualizacion($stmt);
 }

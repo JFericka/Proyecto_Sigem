@@ -444,7 +444,7 @@ $usuarios_db = $usuarioModel->obtenerTodos();
             <?php if ($action === 'listar'): ?>
                 <div class="module-header">
                     <div class="header-left">
-                        <a href="Dasboard.php" class="btn-back" title="Volver al Dashboard">
+                        <a href="Dashboard.php" class="btn-back" title="Volver al Dashboard">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <div class="module-title">
