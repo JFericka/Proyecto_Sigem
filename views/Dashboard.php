@@ -6,10 +6,18 @@ auth_requerir();
 $rol_usuario = auth_nombre_rol();   // Lo que se muestra en "¡Hola, ...!" según el usuario que inició sesión
 
 $hoy = date('Y-m-d');
+<<<<<<< HEAD
+=======
+$token_sesion = substr(sha1(session_id()), 0, 16);   // identifica esta sesión para mostrar el saludo una sola vez
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
+=======
+    <script>if (window.self !== window.top) { window.top.location.href = window.location.href; }</script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Bodega Municipal</title>
@@ -17,6 +25,12 @@ $hoy = date('Y-m-d');
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<<<<<<< HEAD
+=======
+    <!-- Bootstrap 5.3 (CSS) + capa de compatibilidad para conservar el diseño propio -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap-compat.css">
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <style>
         :root {
             --bg-page: #F4F8FB;
@@ -526,6 +540,19 @@ $hoy = date('Y-m-d');
         .nav-brand-icon i { background: linear-gradient(135deg, #1E3A5F, #2B6CB0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
 
     
+<<<<<<< HEAD
+=======
+        /* --- Módulo abierto dentro del Dashboard --- */
+        .modulo-overlay { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 60; display: none; will-change: transform, opacity, filter; }
+        .modulo-overlay iframe { width: 100%; height: 100%; border: 0; display: block; background: transparent; }
+        .nav-right { transition: opacity 0.8s ease, filter 0.8s ease, transform 0.9s cubic-bezier(.22, .61, .36, 1); transform-origin: right center; }
+        .nav-right.oculto { opacity: 0; filter: blur(8px); transform: translateX(40px) scale(0.4); pointer-events: none; }
+
+        /* --- Saludo con efecto humo (aparece al entrar y se desvanece a los 15 s) --- */
+        .welcome-title { transition: opacity 1.5s ease, filter 1.5s ease, transform 1.7s cubic-bezier(.22, .61, .36, 1); transform-origin: left center; }
+        .welcome-title.humo-fuera { opacity: 0; filter: blur(12px); transform: translate(-60px, 10px) scale(0.4); }
+
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
         /* --- Accesos rápidos: botón, efecto humo y carrito --- */
         .metric-card[data-modulo] { cursor: pointer; }
         .quick-wrap { position: relative; }
@@ -568,7 +595,11 @@ $hoy = date('Y-m-d');
             </div>
             Sistema de Bodega Municipal
         </div>
+<<<<<<< HEAD
         <div class="nav-right">
+=======
+        <div class="nav-right" id="navAcciones">
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             <!-- Campana de alertas: préstamos sin devolver, vencimientos y stock mínimo -->
             <button class="notification-btn sin-alertas" id="btnAlertas" title="Alertas" type="button">
                 <i class="fa-solid fa-bell"></i>
@@ -582,6 +613,12 @@ $hoy = date('Y-m-d');
         </div>
     </header>
 
+<<<<<<< HEAD
+=======
+    <!-- Módulo abierto dentro del Dashboard: la barra superior no se mueve y el módulo ocupa todo el espacio -->
+    <div class="modulo-overlay" id="moduloOverlay"><iframe id="moduloFrame" title="Módulo"></iframe></div>
+
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <!-- Contenido Principal Fijo -->
     <main class="main-container">
         
@@ -591,7 +628,11 @@ $hoy = date('Y-m-d');
 
         <!-- Saludo y Selector de Fecha -->
         <div class="header-section">
+<<<<<<< HEAD
             <div class="welcome-title">
+=======
+            <div class="welcome-title humo-fuera" id="saludo">
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
                 <h1>¡Hola, <?php echo htmlspecialchars($rol_usuario); ?>!</h1>
                 <p>Bienvenido al Sistema de Gestión de Bodega Municipal.</p>
             </div>
@@ -844,25 +885,52 @@ $hoy = date('Y-m-d');
         document.addEventListener('click', function (e) { if (!panel.contains(e.target)) panel.classList.remove('open'); });
         inputFecha.addEventListener('change', cargarResumen);
 
+<<<<<<< HEAD
         // Al hacer clic en Entradas/Salidas (si su rol lo permite) se abre el listado de ese día
         document.querySelectorAll('.metric-card[data-modulo]').forEach(function (c) {
             c.addEventListener('click', function () {
                 window.location.href = c.dataset.modulo + '?fecha=' + encodeURIComponent(inputFecha.value);
             });
         });
+=======
+        // Lo usa el Dashboard al cerrar un módulo para actualizar campana y conteos
+        window.sigemRefrescar = function () { cargarAlertas(); cargarResumen(); };
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 
         cargarAlertas();
         cargarResumen();
         setInterval(cargarAlertas, 60000);
+<<<<<<< HEAD
+=======
+
+        // Saludo: se muestra una sola vez por sesión (aparece con efecto humo y desaparece igual a los 15 segundos)
+        const saludo = document.getElementById('saludo');
+        const TOKEN_SESION = '<?php echo $token_sesion; ?>';
+        let yaVisto = false;
+        try { yaVisto = sessionStorage.getItem('sigemSaludo') === TOKEN_SESION; } catch (e) {}
+        if (saludo && !yaVisto) {
+            try { sessionStorage.setItem('sigemSaludo', TOKEN_SESION); } catch (e) {}
+            setTimeout(function () { saludo.classList.remove('humo-fuera'); }, 250);
+            setTimeout(function () { saludo.classList.add('humo-fuera'); }, 250 + 1700 + 15000);
+        }
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     })();
     </script>
 
     <script>
+<<<<<<< HEAD
     // Accesos rápidos: se pliegan solos tras 15 s sin actividad (efecto humo); sale un tráiler que repite cada 6 s;
     // cualquier movimiento o interacción lo quita y vuelve a desplegar los módulos.
     (function () {
         const INACTIVIDAD_MS = 15 * 1000;       // tiempo sin actividad antes de recoger los módulos
         const ESPERA_CARRITO_MS = 6 * 1000;     // espera entre cada salida del tráiler
+=======
+    // Accesos rápidos: se pliegan solos tras 15 s sin actividad (efecto humo); el tráiler sale 10 s después y repite cada 10 s;
+    // cualquier movimiento o interacción lo quita y vuelve a desplegar los módulos.
+    (function () {
+        const INACTIVIDAD_MS = 15 * 1000;       // tiempo sin actividad antes de recoger los módulos
+        const ESPERA_CARRITO_MS = 10 * 1000;    // espera entre cada salida del tráiler
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
         const RECORRIDO_MS = 9000;              // lo que tarda el carrito en cruzar el panel
 
         const wrap = document.getElementById('quickWrap');
@@ -875,7 +943,11 @@ $hoy = date('Y-m-d');
 
         let colapsado = false, animCarrito = null, animRoad = null;
         let tInactividad = null, tCarrito = null, tAnimando = null, tPaquetes = null;
+<<<<<<< HEAD
         let ignorarHasta = 0, ultimaAuto = 0;
+=======
+        let ignorarHasta = 0, ultimaAuto = 0, pausado = false;
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 
         cards.forEach(function (c, i) { c.style.setProperty('--i', i); });
 
@@ -896,7 +968,11 @@ $hoy = date('Y-m-d');
         }
 
         function colapsar() {
+<<<<<<< HEAD
             if (colapsado) return;
+=======
+            if (colapsado || pausado) return;
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             calcularVectores();
             animar();
             ignorarHasta = Date.now() + 800;     // evita que el roce del puntero deshaga el recogido al instante
@@ -904,7 +980,11 @@ $hoy = date('Y-m-d');
             colapsado = true;
             btn.setAttribute('aria-expanded', 'false');
             clearTimeout(tInactividad);
+<<<<<<< HEAD
             programarCarrito(400);               // el carrito sale mientras los módulos se recogen
+=======
+            programarCarrito(ESPERA_CARRITO_MS);  // el tráiler sale 10 s después de recogerse (25 s de inactividad en total)
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
         }
 
         function expandir() {
@@ -956,7 +1036,11 @@ $hoy = date('Y-m-d');
         }
 
         function lanzarCarrito() {
+<<<<<<< HEAD
             if (!colapsado || animCarrito) return;
+=======
+            if (!colapsado || animCarrito || pausado) return;
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             const w = cart.offsetWidth, h = cart.offsetHeight;
             const x0 = btn.offsetLeft + btn.offsetWidth / 2 - w / 2;
             const y0 = btn.offsetTop + btn.offsetHeight / 2 - h / 2;
@@ -989,7 +1073,11 @@ $hoy = date('Y-m-d');
                 clearInterval(tPaquetes);
                 if (animRoad) { animRoad.cancel(); animRoad = null; }
                 cart.classList.remove('activo');
+<<<<<<< HEAD
                 programarCarrito(ESPERA_CARRITO_MS);    // vuelve a salir a los 6 segundos
+=======
+                programarCarrito(ESPERA_CARRITO_MS);    // vuelve a salir a los 10 segundos
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             };
         }
 
@@ -1029,12 +1117,117 @@ $hoy = date('Y-m-d');
             document.addEventListener(ev, actividad, { passive: true });
         });
 
+<<<<<<< HEAD
+=======
+        // Mientras hay un módulo abierto se detiene todo; al cerrarlo, los accesos vuelven con su efecto
+        window.sigemPausa = function (valor) {
+            pausado = valor;
+            if (valor) {
+                clearTimeout(tInactividad);
+                clearTimeout(tCarrito);
+                cancelarCarrito(true);
+            } else if (colapsado) {
+                expandir();
+            } else {
+                reiniciarInactividad();
+            }
+        };
+
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
         window.addEventListener('resize', calcularVectores);
         calcularVectores();
         reiniciarInactividad();
     })();
     </script>
 
+<<<<<<< HEAD
     <script src="../assets/js/acceso.js"></script>
+=======
+    <script>
+    // Apertura y cierre de módulos dentro del Dashboard, con el efecto humo (la barra superior no se mueve)
+    (function () {
+        const overlay = document.getElementById('moduloOverlay');
+        const frame = document.getElementById('moduloFrame');
+        const nav = document.getElementById('navAcciones');
+        const barra = document.querySelector('.navbar');
+        let abierto = false, cerrando = false, origenEl = null;
+
+        function vector() {
+            const r = origenEl.getBoundingClientRect(), o = overlay.getBoundingClientRect();
+            return { dx: (r.left + r.width / 2) - (o.left + o.width / 2), dy: (r.top + r.height / 2) - (o.top + o.height / 2) };
+        }
+
+        function abrir(url, el) {
+            if (abierto) return;
+            abierto = true;
+            origenEl = el;
+            overlay.style.top = barra.offsetHeight + 'px';
+            if (window.sigemPausa) window.sigemPausa(true);
+            nav.classList.add('oculto');                       // la campana y "Salir" se desvanecen
+
+            overlay.style.visibility = 'hidden';
+            overlay.style.display = 'block';
+            let iniciado = false;
+            function iniciar() {
+                if (iniciado) return;
+                iniciado = true;
+                const v = vector();
+                overlay.style.visibility = 'visible';
+                overlay.animate([
+                    { transform: 'translate(' + v.dx + 'px,' + v.dy + 'px) scale(0.12)', opacity: 0, filter: 'blur(14px)', offset: 0 },
+                    { transform: 'translate(' + (v.dx * 0.3) + 'px,' + (v.dy * 0.3) + 'px) scale(0.6)', opacity: 0.65, filter: 'blur(6px)', offset: 0.5 },
+                    { transform: 'none', opacity: 1, filter: 'blur(0)', offset: 1 }
+                ], { duration: 1200, easing: 'cubic-bezier(.22, .61, .36, 1)' });
+            }
+            frame.onload = iniciar;
+            setTimeout(iniciar, 2500);
+            frame.src = url;
+        }
+
+        function cerrar() {
+            if (!abierto || cerrando) return;
+            cerrando = true;
+            const v = vector();
+            const anim = overlay.animate([
+                { transform: 'none', opacity: 1, filter: 'blur(0)', offset: 0 },
+                { transform: 'translate(' + (v.dx * 0.3) + 'px,' + (v.dy * 0.3) + 'px) scale(0.6)', opacity: 0.6, filter: 'blur(6px)', offset: 0.5 },
+                { transform: 'translate(' + v.dx + 'px,' + v.dy + 'px) scale(0.12)', opacity: 0, filter: 'blur(14px)', offset: 1 }
+            ], { duration: 950, easing: 'cubic-bezier(.4, 0, .6, 1)', fill: 'forwards' });
+            anim.onfinish = function () {
+                overlay.style.display = 'none';
+                anim.cancel();
+                frame.onload = null;
+                frame.src = 'about:blank';
+                nav.classList.remove('oculto');                // la campana y "Salir" regresan con el mismo efecto
+                abierto = false;
+                cerrando = false;
+                if (window.sigemPausa) window.sigemPausa(false);   // los accesos rápidos vuelven a desplegarse
+                if (window.sigemRefrescar) window.sigemRefrescar();
+            };
+        }
+
+        window.addEventListener('message', function (e) {
+            if (e.origin !== window.location.origin || e.source !== frame.contentWindow) return;
+            if (e.data && e.data.sigem === 'cerrar') cerrar();
+        });
+
+        document.querySelectorAll('.quick-card[data-permiso="1"]').forEach(function (c) {
+            c.addEventListener('click', function (e) {
+                if (e.ctrlKey || e.metaKey || e.shiftKey) return;   // permite abrir en otra pestaña
+                e.preventDefault();
+                abrir(c.getAttribute('href'), c);
+            });
+        });
+        document.querySelectorAll('.metric-card[data-modulo]').forEach(function (c) {
+            c.addEventListener('click', function () {
+                abrir(c.dataset.modulo + '?fecha=' + encodeURIComponent(document.getElementById('fechaDia').value), c);
+            });
+        });
+    })();
+    </script>
+
+    <script src="../assets/js/acceso.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 </body>
 </html>

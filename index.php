@@ -32,6 +32,10 @@ if ($route === 'logout') {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
+=======
+    <script>if (window.self !== window.top) { window.top.location.href = window.location.href; }</script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Bodega Municipal - SIGEM</title>

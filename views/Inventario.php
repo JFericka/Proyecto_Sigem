@@ -54,6 +54,13 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
     <title>Inventario de Bodega Municipal - SIGEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<<<<<<< HEAD
+=======
+    <!-- Bootstrap 5.3 (CSS) + capa de compatibilidad para conservar el diseño propio -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap-compat.css">
+    <script src="../assets/js/efecto.js"></script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <style>
         :root {
             --bg-page: #F2F0EF;          
@@ -317,5 +324,9 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
         });
     </script>
 
+<<<<<<< HEAD
+=======
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 </body>
 </html>

@@ -5,7 +5,11 @@
             "name": "Abrir en Navegador",
             "type": "msedge",
             "request": "launch",
+<<<<<<< HEAD
             "url": "http://localhost/Proyecto_Sigem_/index.php",
+=======
+            "url": "http://localhost/Proyecto_Sigem/index.php",
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             "webRoot": "${workspaceRoot}"
         },
         {

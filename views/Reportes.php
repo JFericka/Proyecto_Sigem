@@ -63,6 +63,10 @@ if ($tipo_reporte === 'inventario') {
     $datos_reporte = $modelo->salidas($desde, $hasta, $subtipo);
 }
 $limite_aviso = date('Y-m-d', strtotime('+30 days'));
+<<<<<<< HEAD
+=======
+$color_tipo = ['inventario' => '#4F46E5', 'entradas' => '#00875A', 'salidas' => '#A0522D'][$tipo_reporte];
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -72,6 +76,13 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
     <title>Reportes y Estadísticas - SIGEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<<<<<<< HEAD
+=======
+    <!-- Bootstrap 5.3 (CSS) + capa de compatibilidad para conservar el diseño propio -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap-compat.css">
+    <script src="../assets/js/efecto.js"></script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     <style>
         :root {
             --bg-page: #F2F0EF;          
@@ -135,13 +146,30 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
 
         /* REGLAS ESTRICTAS PARA OCULTAR SELECTORES Y MOSTRAR SOLO DATOS AL IMPRIMIR */
         .print-header { display: none; }
+<<<<<<< HEAD
         @page { size: A4 landscape; margin: 12mm; }
+=======
+        @page { size: A4 portrait; margin: 12mm; }
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
         @media print {
             .print-header { display: block !important; margin-bottom: 10px; border-bottom: 2px solid #1E3A5F; padding-bottom: 6px; }
             .print-header h2 { font-size: 15pt; color: #1E3A5F; margin: 0; }
             .print-header h3 { font-size: 12pt; margin: 2px 0; }
             .print-header p { font-size: 9pt; color: #475569; margin: 0; }
+<<<<<<< HEAD
             table { font-size: 8.5pt; }
+=======
+            /* PDF en blanco y negro */
+            * { color: #000 !important; background: transparent !important; box-shadow: none !important; text-shadow: none !important;
+                -webkit-text-fill-color: #000 !important; filter: none !important; }
+            .print-header { border-bottom: 2px solid #000 !important; }
+            .print-header h2, .print-header h3, .print-header p { color: #000 !important; }
+            table { font-size: 8pt; width: 100% !important; border-collapse: collapse !important; table-layout: auto !important; }
+            th, td { border: 1px solid #000 !important; padding: 3px 4px !important; word-break: break-word; vertical-align: top; }
+            th { background-color: #E5E5E5 !important; font-size: 7.5pt !important; }
+            .badge-status { border: 1px solid #000 !important; padding: 0 3px !important; border-radius: 3px !important; }
+            small { font-size: 7pt !important; }
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
             body, html { height: auto !important; overflow: visible !important; background: white !important; }
             .navbar, .report-selectors, .filter-toolbar, .btn-back, .module-header { display: none !important; }
             .page-wrapper { padding: 0 !important; background: none !important; display: block !important; }
@@ -158,6 +186,14 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
         .nav-brand-icon i { background: linear-gradient(135deg, #1E3A5F, #2B6CB0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
         /* Fondo con tono suave del color distintivo del módulo */
         .page-wrapper { background: linear-gradient(180deg, #FDF3E6 0%, #F9E3C8 100%); }
+<<<<<<< HEAD
+=======
+
+        /* Encabezado de la tabla con el color del tipo de reporte (Entradas verde, Salidas café, Inventario índigo) y letras blancas */
+        .main-container table thead th { background-color: var(--tipo-color) !important; color: #FFFFFF !important; -webkit-text-fill-color: #FFFFFF !important;
+                                         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        @media print { .print-header { border-bottom-color: var(--tipo-color) !important; } }
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
     </style>
 </head>
 <body>
@@ -177,7 +213,11 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
     </header>
 
     <div class="page-wrapper">
+<<<<<<< HEAD
         <main class="main-container">
+=======
+        <main class="main-container" style="--tipo-color: <?php echo $color_tipo; ?>;">
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 
             <div class="module-header">
                 <div class="header-left">
@@ -234,7 +274,11 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
                         <i class="fa-solid fa-circle-info"></i> Muestra el estado del inventario al día de hoy (<?php echo date('d/m/Y'); ?>).
                     <?php else: ?>
                         <i class="fa-solid fa-layer-group"></i>
+<<<<<<< HEAD
                         <select name="subtipo" class="form-control-sm" onchange="this.form.submit()" title="Tipo de movimiento a incluir">
+=======
+                        <select name="subtipo" class="form-control-sm" onchange="(window.sigemEnviar ? window.sigemEnviar(this.form) : this.form.submit())" title="Tipo de movimiento a incluir">
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
                             <?php foreach ($subtipos[$tipo_reporte] as $clave => $etq): ?>
                                 <option value="<?php echo $clave; ?>" <?php echo ($subtipo === $clave) ? 'selected' : ''; ?>><?php echo $etq; ?></option>
                             <?php endforeach; ?>
@@ -383,11 +427,26 @@ $limite_aviso = date('Y-m-d', strtotime('+30 days'));
     <script>
         // El PDF se genera con la ventana de impresión del navegador ("Guardar como PDF"); el nombre del archivo sale del título
         function generarPDF() {
+<<<<<<< HEAD
             const anterior = document.title;
             document.title = 'Reporte_<?php echo $tipo_reporte; ?>_<?php echo $tipo_reporte === 'inventario' ? date('Y-m-d') : $desde . '_a_' . $hasta; ?>';
             window.print();
             document.title = anterior;
         }
     </script>
+=======
+            const nombre = 'Reporte_<?php echo $tipo_reporte; ?>_<?php echo $tipo_reporte === 'inventario' ? date('Y-m-d') : $desde . '_a_' . $hasta; ?>';
+            const anterior = document.title;
+            let anteriorPadre = null;
+            document.title = nombre;
+            // Si el módulo está abierto dentro del Dashboard, el navegador toma el nombre del PDF de la página principal
+            try { if (window.parent !== window) { anteriorPadre = window.parent.document.title; window.parent.document.title = nombre; } } catch (e) {}
+            window.print();
+            document.title = anterior;
+            try { if (anteriorPadre !== null) window.parent.document.title = anteriorPadre; } catch (e) {}
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> dcbe80f0b00f2448b1923b4c126b94b010c240aa
 </body>
 </html>
